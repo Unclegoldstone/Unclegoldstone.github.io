@@ -45,3 +45,7 @@ a.sidebar-action:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--
 #projects .filters{flex-wrap:wrap}
 #projects .filter-note{line-height:1.7}
 @media(max-width:600px){#projects .project-card{flex-basis:90%}#projects .filter-note{flex-basis:100%;margin-left:0;margin-top:4px}}
+.projects-empty{padding:32px 20px;border:1px dashed var(--line);background:var(--panel);color:var(--muted);font-size:12px;line-height:1.8;text-align:center}
+
+.breadcrumb .welcome-breadcrumb{font-family:Consolas,"Courier New",monospace;font-size:12px;font-weight:700;letter-spacing:.06em;line-height:1.5;color:var(--accent)}
+@media(max-width:600px){.breadcrumb .welcome-breadcrumb{font-size:10px;letter-spacing:.03em}}

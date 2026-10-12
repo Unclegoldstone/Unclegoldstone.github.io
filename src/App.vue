@@ -6,14 +6,19 @@ import profileAvatar from './assets/profile-gourd-pixel.png'
 import SidebarActions from './SidebarActions.vue'
 import ProjectsSection from './components/ProjectsSection.vue'
 import NotesSection from './components/NotesSection.vue'
+import HomeTyping from './components/HomeTyping.vue'
 import { projects } from './data/projects.js'
 import { notes } from './data/notes.js'
+import { useActiveSection } from './composables/useActiveSection.js'
 
 const leftOpen = ref(false), rightOpen = ref(false), compact = ref(false)
 const active = ref('home'), light = ref(false), selected = ref(null)
 const dialog = ref(null)
+const level = new Date().getFullYear() - 2003 + 1
 let returnFocus
 const links = [{ id: 'home', icon: '⌂', name: '首页', en: 'HOME' }, { id: 'projects', icon: '▦', name: '我的作品', en: 'PROJECTS' }, { id: 'notes', icon: '≡', name: '随笔记录', en: 'JOURNAL' }, { id: 'about', icon: '☺', name: '关于我', en: 'ABOUT' }]
+
+useActiveSection(active, links.map(link => link.id))
 
 function syncLayout() {
   const nextCompact = window.innerWidth < 1100
@@ -47,7 +52,7 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
     <div class="layout">
       <aside v-if="leftOpen" id="left-sidebar" class="sidebar left-sidebar" aria-label="网站导航">
         <div class="sidebar-heading"><span>探索小站</span><button class="small-button" aria-label="收起导航侧栏" @click="toggle('left')">←</button></div>
-        <nav><a v-for="link in links" :key="link.id" :href="`#${link.id}`" :class="{ active: active === link.id }" @click.prevent="go(link.id)"><span class="nav-icon">{{ link.icon }}</span><span>{{ link.name }}<small>{{ link.en }}</small></span><span v-if="active === link.id" class="nav-arrow">›</span></a></nav>
+        <nav><a v-for="link in links" :key="link.id" :href="`#${link.id}`" :class="{ active: active === link.id }" :aria-current="active === link.id ? 'location' : undefined" @click.prevent="go(link.id)"><span class="nav-icon">{{ link.icon }}</span><span>{{ link.name }}<small>{{ link.en }}</small></span><span v-if="active === link.id" class="nav-arrow">›</span></a></nav>
         <div class="sidebar-divider"></div>
         <p class="tiny-label">THE LITTLE THINGS</p>
         <a class="quiet-link" href="#notes" @click.prevent="go('notes')"><span>✧</span> 灵感与日常 <span class="count">{{ String(notes.length).padStart(2, '0') }}</span></a>
@@ -57,9 +62,9 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
 
       <main id="main-content">
         <section id="home" class="welcome-section">
-          <div class="breadcrumb">小站入口 <span>/</span> <b>欢迎来到我的世界</b><span class="page-number">PAGE 001</span></div>
+          <div class="breadcrumb">小站入口 <span>/</span> <b class="welcome-breadcrumb">Welcome to my World</b><span class="page-number">PAGE 001</span></div>
           <div class="hero">
-            <div class="hero-copy"><span class="eyebrow"><span class="status-dot"></span> HELLO, WORLD_</span><h1>在数字世界里，<br>留下一点<span>自己的痕迹。</span></h1><p>你好，我是 Goldstone。<br>这里收藏我的作品、想法，以及日常里的微小闪光。</p><button class="primary-button" @click="go('projects')">探索我的作品 <span>↗</span></button><button class="text-button" @click="go('about')">认识一下我 →</button></div>
+            <div class="hero-copy"><HomeTyping /><h1>在数字世界里，<br>留下一点<span>自己的痕迹。</span></h1><p>你好，我是 Goldstone。<br>这里收藏我的作品、想法，以及日常里的微小闪光。</p><button class="primary-button" @click="go('projects')">探索我的作品 <span>↗</span></button><button class="text-button" @click="go('about')">认识一下我 →</button></div>
             <div class="hero-art"><PixelScene/><div class="scene-caption"><span>坐标：我的精神角落</span><span>✦ 充电中</span></div></div>
           </div>
           <div class="welcome-note"><span class="note-icon">✦</span><span>欢迎路过我的像素小站。找个舒服的位置，随便看看吧。</span><span class="note-end">MAKE YOURSELF AT HOME</span></div>
@@ -75,7 +80,7 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
 
       <aside v-if="rightOpen" id="right-sidebar" class="sidebar right-sidebar" aria-label="个人信息">
         <div class="sidebar-heading"><span>这个小站的主人</span><button class="small-button" aria-label="收起个人信息侧栏" @click="toggle('right')">→</button></div>
-        <div class="profile"><div class="avatar"><img :src="profileAvatar" alt="Goldstone 的像素葫芦头像" width="58" height="58"><span class="avatar-badge">✦</span></div><h2>Goldstone<span>Lv. 01</span></h2><p>探索 · 记录 · 创造</p><span class="profile-status"><span class="status-dot"></span> 正在构建自己的小世界</span></div>
+        <div class="profile"><div class="avatar"><img :src="profileAvatar" alt="Goldstone 的像素葫芦头像" width="58" height="58"><span class="avatar-badge">✦</span></div><h2>Goldstone<span>Lv. {{ level }}</span></h2><p>探索 · 记录 · 创造</p><span class="profile-status"><span class="status-dot"></span> 正在构建自己的小世界</span></div>
         <div class="sidebar-divider"></div>
         <div class="currently"><p class="tiny-label">NOW / 此刻</p><div><span>⌘</span><p>正在折腾<small>我的第一个像素网站</small></p></div><div><span>♬</span><p>今日氛围<small>Lo-fi & 一杯热咖啡</small></p></div><div><span>✧</span><p>一点提醒<small>进步可以慢一点</small></p></div></div>
         <div class="quote"><span>“</span><p>每一个大大的世界，<br>都从一个小小的像素开始。</p><small>ONE PIXEL AT A TIME.</small></div><div class="right-bottom"><span class="status-dot"></span> 很高兴在这里遇见你。</div>

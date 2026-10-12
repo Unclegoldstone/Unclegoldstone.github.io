@@ -5,7 +5,7 @@ import PixelScene from '../PixelScene.vue'
 const props = defineProps({ projects: { type: Array, required: true } })
 const emit = defineEmits(['open-detail'])
 const filter = ref('全部')
-const filters = ['全部', '个人项目', '小工具']
+const filters = ['全部', '个人项目', '合作项目', '小工具']
 const projectStrip = ref(null)
 const projectsRegion = ref(null)
 onMounted(() => projectsRegion.value?.addEventListener('wheel', scrollProjects, { passive: false }))
@@ -47,6 +47,7 @@ function scrollProjects(event) {
       </button>
       <span class="filter-note">I just accept  what's in front of me</span>
     </div>
+    <p v-if="visibleProjects.length === 0" class="projects-empty" role="status">这个分类暂时还没有作品，敬请期待。</p>
     <div ref="projectStrip" class="project-grid" role="region" aria-label="作品卡片，可水平滚动" tabindex="0">
       <button v-for="project in visibleProjects" :key="project.no" class="project-card" @click="emit('open-detail', project)">
         <div class="project-art">
