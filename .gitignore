@@ -1,0 +1,13 @@
+node_modules/
+dist/
+output/
+*.local
+
+# Local design iterations and screenshots
+design-previews/
+desktop-preview.png
+mobile-preview.png
+# Local credentials
+.env
+.env.*
+!.env.example
