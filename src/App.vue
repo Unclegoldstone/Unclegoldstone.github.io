@@ -7,6 +7,7 @@ import SidebarActions from './SidebarActions.vue'
 import ProjectsSection from './components/ProjectsSection.vue'
 import NotesSection from './components/NotesSection.vue'
 import HomeTyping from './components/HomeTyping.vue'
+import DayScene from './components/DayScene.vue'
 import { projects } from './data/projects.js'
 import { notes } from './data/notes.js'
 import { useActiveSection } from './composables/useActiveSection.js'
@@ -65,7 +66,7 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
           <div class="breadcrumb">小站入口 <span>/</span> <b class="welcome-breadcrumb">Welcome to my World</b><span class="page-number">PAGE 001</span></div>
           <div class="hero">
             <div class="hero-copy"><HomeTyping /><h1>在数字世界里，<br>留下一点<span>自己的痕迹。</span></h1><p>你好，我是 Goldstone。<br>这里收藏我的作品、想法，以及日常里的微小闪光。</p><button class="primary-button" @click="go('projects')">探索我的作品 <span>↗</span></button><button class="text-button" @click="go('about')">认识一下我 →</button></div>
-            <div class="hero-art"><PixelScene/><div class="scene-caption"><span>坐标：我的精神角落</span><span>✦ 充电中</span></div></div>
+            <DayScene />
           </div>
           <div class="welcome-note"><span class="note-icon">✦</span><span>欢迎路过我的像素小站。找个舒服的位置，随便看看吧。</span><span class="note-end">MAKE YOURSELF AT HOME</span></div>
         </section>

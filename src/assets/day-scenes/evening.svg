@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" role="img" aria-label="傍晚的像素山谷、松林与小屋" shape-rendering="crispEdges">
+    
+    <path fill="#8997a4" d="M0 0h640v20H0z"/><path fill="#9a9fa1" d="M0 20h640v20H0z"/><path fill="#aca79d" d="M0 40h640v20H0z"/><path fill="#bdaf9a" d="M0 60h640v20H0z"/><path fill="#cbb596" d="M0 80h640v20H0z"/><path fill="#d9bb93" d="M0 100h640v20H0z"/><path fill="#e7c18f" d="M0 120h640v20H0z"/><path fill="#ebc793" d="M0 140h640v20H0z"/><path fill="#f0ce97" d="M0 160h640v20H0z"/><path fill="#f4d49b" d="M0 180h640v20H0z"/><path fill="#f4d49b" d="M0 200h640v20H0z"/><path fill="#f4d49b" d="M0 220h640v20H0z"/><path fill="#f4d49b" d="M0 240h640v20H0z"/>
+    
+    <g fill="#ffdb83" opacity=".12"><path d="M432 76h96v24h-96zM444 64h72v48h-72z"/></g><g transform="translate(480 88)"><path fill="#ffdb83"  d="M-12-20h24v4h8v8h4v16h-4v8h-8v4h-24v-4h-8v-8h-4V-8h4v-8h8z"/></g><g fill="#f0d7ae" opacity=".65" transform="translate(54 0)"><path d="M52 48h16v-8h40v8h24v8h24v8H36v-8h16zM356 76h24v-8h40v8h32v8h24v8H340v-8h16z"/></g>
+    <path fill="#adab91" d="M0 139h24v-16h24v-20h24V84h32v19h24v20h24v16h40v-20h24v-24h24V74h24v21h24v24h24v20h40v-16h24v-21h24V82h32v20h24v21h24v16h32v-15h24v-24h32V80h24v20h24v24h24v15h48v121H0z"/>
+    <path fill="#858774" d="M0 171h32v-16h32v-16h32v16h32v16h48v-16h32v-20h32v20h32v16h48v-12h32v-20h32v20h32v12h48v-16h32v-16h32v16h32v16h64v89H0z"/>
+    <path fill="#aba46a" d="M0 211h112v-8h104v-8h160v8h152v8h112v49H0z"/>
+    <path fill="#efd49a" d="M269 203h65v8h-24v8h-20v8h35v8h39v8h49v17H259v-17h-26v-16h25v-8h11z"/>
+    <g fill="#555e46"><path d="M38 117h8v16h8v16h8v16h8v16H14v-16h8v-16h8v-16h8zM95 142h8v16h8v16h8v16H79v-16h8v-16h8zM560 111h8v16h8v16h8v16h8v16h8v16h-72v-16h8v-16h8v-16h8v-16h8zM505 148h8v16h8v16h8v16h-40v-16h8v-16h8z"/></g>
+    <g fill="#3c4938"><path d="M0 214h46v-8h32v8h29v8h45v38H0zM458 236h43v-10h38v-7h43v-8h58v49H458z"/></g>
+    <path fill="#a37953" d="M386 166h80v50h-80z"/><path fill="#6c5c44" d="M378 162h16v-8h16v-8h32v8h16v8h16v9h-96z"/><path fill="#c69c64" d="M391 177h70v5h-70zm0 17h70v5h-70z"/>
+    <path fill="#d9caa3" d="M398 179h16v16h-16zm36 0h16v16h-16z"/><path fill="#624f3a" d="M418 192h12v24h-12z"/><path fill="#ada18c" d="M442 139h9v17h-9z"/>
+    <g fill="#e9d2a3" opacity=".35"><path d="M443 126h8v8h-8zm8-14h8v8h-8zm-5-14h8v8h-8z"/></g>
+    <g fill="#f2ce87"><path d="M168 228h4v4h-4zm24 14h4v4h-4zm-63-8h4v4h-4zm370 9h4v4h-4z"/></g>
+  </svg>
