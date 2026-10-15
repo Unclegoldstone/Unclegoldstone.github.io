@@ -51,8 +51,9 @@ function scrollProjects(event) {
     <div ref="projectStrip" class="project-grid" role="region" aria-label="作品卡片，可水平滚动" tabindex="0">
       <button v-for="project in visibleProjects" :key="project.no" class="project-card" @click="emit('open-detail', project)">
         <div class="project-art">
-          <PixelScene :variant="project.scene" />
-          <span class="project-number">PROJECT_{{ project.no }}</span>
+          <img v-if="project.cover" class="project-cover" :src="project.cover" :alt="`${project.title} 封面`" width="320" height="160">
+          <PixelScene v-else :variant="project.scene" />
+
           <span class="art-arrow">↗</span>
         </div>
         <div class="project-copy">

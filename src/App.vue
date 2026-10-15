@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
-import PixelScene from './PixelScene.vue'
+import ProjectDetailMedia from './components/ProjectDetailMedia.vue'
 import CatCompanion from './CatCompanion.vue'
 import profileAvatar from './assets/profile-gourd-pixel.png'
 import SidebarActions from './SidebarActions.vue'
@@ -89,6 +89,6 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
       </aside>
     </div>
 
-    <dialog ref="dialog" class="detail-dialog" @close="onDialogClose" @click="(e) => { if (e.target === dialog) closeDetail() }"><template v-if="selected"><div class="dialog-top"><span class="tiny-label">GOLDSTONE / {{ selected.type ? 'PROJECT' : 'JOURNAL' }}</span><button class="icon-button" aria-label="关闭详情" @click="closeDetail">×</button></div><PixelScene v-if="selected.scene" :variant="selected.scene"/><h2>{{ selected.title }}</h2><p class="detail-body">{{ selected.body }}</p><span class="demo-label">示例内容 · 可在项目源文件中替换</span></template></dialog>
+    <dialog ref="dialog" class="detail-dialog" :class="{ 'image-detail': selected?.detailImages?.length || selected?.cover }" @close="onDialogClose" @click="(e) => { if (e.target === dialog) closeDetail() }"><template v-if="selected"><div class="dialog-top"><template v-if="selected.type"><time v-if="selected.publishedAt" class="tiny-label" :datetime="selected.publishedAt">发布于 {{ selected.publishedAt }}</time><span v-else class="tiny-label">发布日期待补充</span></template><span v-else class="tiny-label">GOLDSTONE / JOURNAL</span><button class="icon-button" aria-label="关闭详情" @click="closeDetail">×</button></div><ProjectDetailMedia :project="selected" /><h2>{{ selected.title }}</h2><p class="detail-body">{{ selected.body }}</p><p v-if="selected.downloadUrl" class="detail-download">下载链接：<a :href="selected.downloadUrl" target="_blank" rel="noopener noreferrer">{{ selected.downloadUrl }} ↗</a></p><span v-if="selected.isExample !== false" class="demo-label">示例内容 · 可在项目源文件中替换</span></template></dialog>
   </div>
 </template>
