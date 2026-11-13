@@ -1,4 +1,5 @@
 <script setup>
+import BlogLoadNotice from './components/BlogLoadNotice.vue'
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import ProjectDetailMedia from './components/ProjectDetailMedia.vue'
 import CatCompanion from './CatCompanion.vue'
@@ -9,7 +10,8 @@ import NotesSection from './components/NotesSection.vue'
 import HomeTyping from './components/HomeTyping.vue'
 import DayScene from './components/DayScene.vue'
 import { projects } from './data/projects.js'
-import { notes } from './data/notes.js'
+import { posts, getLatestBlogPosts } from './data/posts.js'
+const latestPosts = getLatestBlogPosts(3)
 import { useActiveSection } from './composables/useActiveSection.js'
 
 const leftOpen = ref(false), rightOpen = ref(false), compact = ref(false)
@@ -50,13 +52,14 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
 
     <button v-if="compact && (leftOpen || rightOpen)" class="backdrop" aria-label="关闭侧栏" @click="closeSides"></button>
 
+    <BlogLoadNotice />
     <div class="layout">
       <aside v-if="leftOpen" id="left-sidebar" class="sidebar left-sidebar" aria-label="网站导航">
         <div class="sidebar-heading"><span>探索小站</span><button class="small-button" aria-label="收起导航侧栏" @click="toggle('left')">←</button></div>
         <nav><a v-for="link in links" :key="link.id" :href="`#${link.id}`" :class="{ active: active === link.id }" :aria-current="active === link.id ? 'location' : undefined" @click.prevent="go(link.id)"><span class="nav-icon">{{ link.icon }}</span><span>{{ link.name }}<small>{{ link.en }}</small></span><span v-if="active === link.id" class="nav-arrow">›</span></a></nav>
         <div class="sidebar-divider"></div>
         <p class="tiny-label">THE LITTLE THINGS</p>
-        <a class="quiet-link" href="#notes" @click.prevent="go('notes')"><span>✧</span> 灵感与日常 <span class="count">{{ String(notes.length).padStart(2, '0') }}</span></a>
+        <a class="quiet-link" href="#notes" @click.prevent="go('notes')"><span>✧</span> 灵感与日常 <span class="count">{{ String(posts.length).padStart(2, '0') }}</span></a>
         <a class="quiet-link" href="#projects" @click.prevent="go('projects')"><span>◇</span> 创作实验室 <span class="count">{{ String(projects.length).padStart(2, '0') }}</span></a>
         <div class="sidebar-bottom"><div class="pixel-sprout">♧</div><p>慢慢探索，<br>这里总有新的故事。</p><span class="tiny-label">STAY CURIOUS, KEEP BUILDING.</span><SidebarActions /></div>
       </aside>
@@ -73,7 +76,7 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
 
         <ProjectsSection :projects="projects" @open-detail="openDetail" />
 
-        <NotesSection :notes="notes" @open-detail="openDetail" />
+        <NotesSection :posts="latestPosts" />
 
         <section id="about" class="about-panel"><div class="about-symbol">✳</div><div><span class="eyebrow">A LITTLE ABOUT ME</span><h2>保持好奇，持续创造。</h2><p>我希望把这里变成一个长期生长的个人空间：写一点文字，做一点有趣的东西，也认真记录生活。</p><span class="demo-label">当前个人介绍、作品与随笔均为示例，等待你的故事填满。</span></div></section>
         <footer class="footer"><span>© 2026 GOLDSTONE</span><span>用好奇心构建 <b>✦</b> 用像素点缀</span><button @click="go('home')">回到顶部 ↑</button></footer>
@@ -89,6 +92,6 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
       </aside>
     </div>
 
-    <dialog ref="dialog" class="detail-dialog" :class="{ 'image-detail': selected?.detailImages?.length || selected?.cover }" @close="onDialogClose" @click="(e) => { if (e.target === dialog) closeDetail() }"><template v-if="selected"><div class="dialog-top"><template v-if="selected.type"><time v-if="selected.publishedAt" class="tiny-label" :datetime="selected.publishedAt">发布于 {{ selected.publishedAt }}</time><span v-else class="tiny-label">发布日期待补充</span></template><span v-else class="tiny-label">GOLDSTONE / JOURNAL</span><button class="icon-button" aria-label="关闭详情" @click="closeDetail">×</button></div><ProjectDetailMedia :project="selected" /><h2>{{ selected.title }}</h2><p class="detail-body">{{ selected.body }}</p><p v-if="selected.downloadUrl" class="detail-download">下载链接：<a :href="selected.downloadUrl" target="_blank" rel="noopener noreferrer">{{ selected.downloadUrl }} ↗</a></p><span v-if="selected.isExample !== false" class="demo-label">示例内容 · 可在项目源文件中替换</span></template></dialog>
+    <dialog ref="dialog" class="detail-dialog" :class="{ 'image-detail': selected?.detailImages?.length || selected?.cover }" @close="onDialogClose" @click="(e) => { if (e.target === dialog) closeDetail() }"><template v-if="selected"><div class="dialog-top"><template v-if="selected.type"><time v-if="selected.publishedAt" class="tiny-label" :datetime="selected.publishedAt">发布于 {{ selected.publishedAt }}</time><span v-else class="tiny-label">发布日期待补充</span></template><span v-else class="tiny-label">GOLDSTONE / JOURNAL</span><button class="icon-button" aria-label="关闭详情" @click="closeDetail">×</button></div><ProjectDetailMedia :project="selected" /><h2>{{ selected.title }}</h2><p class="detail-body">{{ selected.body }}</p><p v-if="selected.downloadUrl" class="detail-download">github link: <a :href="selected.downloadUrl" target="_blank" rel="noopener noreferrer">{{ selected.downloadUrl }} ↗</a></p><span v-if="selected.isExample !== false" class="demo-label">示例内容 · 可在项目源文件中替换</span></template></dialog>
   </div>
 </template>

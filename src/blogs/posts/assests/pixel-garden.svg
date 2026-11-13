@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" role="img" aria-label="绿色花园，数字花园演示图片" shape-rendering="crispEdges">
+    <path fill="#30453a" d="M0 0h320v160H0z"/><path fill="#3d5444" d="M0 112h320v48H0z"/><path fill="#53684e" d="M0 128h320v4H0zm0 20h320v4H0zM45 112h4v48h-4zm65 0h4v48h-4zm65 0h4v48h-4zm65 0h4v48h-4z"/>
+    <path fill="#23352f" d="M38 27h244v74H38z"/><path fill="#719172" d="M44 33h232v62H44z"/><path fill="#a5b995" d="M50 39h220v50H50z"/><path fill="#526c52" d="M156 33h6v62h-6zM44 62h232v6H44z"/>
+    <g fill="#c79669"><path d="M74 111h38v30H74zM144 104h38v37h-38zM214 115h38v26h-38z"/></g><g fill="#a8cd85"><path d="M88 72h10v39H88zM72 80h16v10H72zm26 9h16v10H98zM157 70h10v34h-10zM143 66h14v17h-14zm24-9h14v20h-14zM227 85h10v30h-10zM215 78h12v17h-12zm22 17h14v10h-14z"/></g><path fill="#e3c87d" d="M151 50h18v18h-18z"/>
+  </svg>

@@ -73,3 +73,15 @@ publishedAt: '2026-10-15',
 ```
 
 日期格式为 `YYYY-MM-DD`。填写后，详情弹窗左上角原来 `GOLDSTONE / PROJECT` 的位置显示“发布于 2026-10-15”。留空时显示“发布日期待补充”。日期不会根据当前时间自动生成或变更；卡片布局和作品顺序保持不变，随笔弹窗不受影响。
+## 独立 Blog
+
+运行开发服务后访问 `/blog.html`。`blog.html#文章slug` 是可直接访问和分享的文章阅读地址，适用于静态部署，无需服务端路由配置。
+
+- `src/Blog.vue`：Blog 列表、分类、搜索、阅读和主题切换。
+- `src/blogs/posts/`：每篇文章一个 Markdown 文件；`src/data/posts.js` 自动加载，不再手动填写段落数组。
+- `src/blog.js` 与根目录 `blog.html`：Blog 入口。
+- `vite.config.js`：同时构建首页和 Blog，构建结果包含 `dist/blog.html`。
+
+Markdown 文章的头部填写 `title`、`date`、`category`、`excerpt`；文件名决定 slug，也可以显式指定。支持图文、代码块和自动目录。搜索支持标题、分类、摘要和正文。详细写作步骤见 `docs/BLOG.md`。
+
+已预留 `getLatestBlogPosts(count)`，供后续首页取出最新若干篇文章。首页“最近的碎碎念”读取最新三篇已发布 Blog 的摘要，点击进入文章阅读页，并提供“查看全部文章”入口。Blog 的时光归档目前展示各月文章数量，分类可筛选。

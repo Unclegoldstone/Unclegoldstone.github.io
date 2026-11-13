@@ -1,3 +1,6 @@
+import dailyRecordDetail2 from '../assets/projects/daily-record-detail-2.png'
+import dailyRecordCover from '../assets/projects/daily-record-cover.png'
+import dailyRecordDetail from '../assets/projects/daily-record-detail.png'
 import gardenOverview from '../assets/projects/garden-overview.svg'
 import gardenWarm from '../assets/projects/garden-warm.svg'
 import gardenNight from '../assets/projects/garden-night.svg'
@@ -30,5 +33,18 @@ export const projects = [
     isExample: false,
     body: 'SrunKeeper 是一款面向深澜（Srun）校园网的认证自动化工具，支持集中管理多个账号与设备、批量拨号、定时检测连接状态，并在断线后自动重连，让校园网连接更省心。',
     downloadUrl: 'https://github.com/Unclegoldstone/SrunKeeper'
+  },
+  {
+    title: 'RecordEverything',
+    type: '小工具',
+    no: '05',
+    publishedAt: '',
+    desc: '支持体重与学习记录、待办管理，以及日历回看、趋势图和热力图统计。',
+    tags: ['日常记录', '数据统计', '效率工具'],
+    cover: dailyRecordCover,
+    detailImages: [dailyRecordDetail, dailyRecordDetail2],
+    isExample: false,
+    body: 'RecordEverything 支持记录早晚体重、学习内容与学习时长，管理每日待办，并自定义记录模板。可按日期回看记录，通过趋势图和热力图查看数据变化与记录情况。',
+    downloadUrl: 'https://github.com/Unclegoldstone/RecordEverything'
   }
 ]
