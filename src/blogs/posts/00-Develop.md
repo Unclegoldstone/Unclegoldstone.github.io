@@ -1,8 +1,8 @@
 ---
 title: "Web更新日志"
-date: '2026-11-13'
+date: '2026-11-16'
 category: ["开发日志"]
-excerpt: "本次更新: 完成Blog页的原型, 支持Markdown的接入， 完成测试"
+excerpt: "`Blog`和`小站入口`的转场动画完成"
 # 草稿设为 true，不会出现在 Blog 中；完成后改为 false。
 draft: false
 ---
@@ -17,4 +17,6 @@ draft: false
 # 2026.11
 
 - [2026-11-12] : 完成Blog原型的设计, 支持接入`Markdown`
+- [2026-11-14] : 网站的SSL证书申请完成
+- [2026-11-16] : `Blog`和`小站入口`的转场动画完成
 

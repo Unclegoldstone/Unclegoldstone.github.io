@@ -1,4 +1,5 @@
 <script setup>
+import PageTransition from './components/PageTransition.vue'
 import BlogLoadNotice from './components/BlogLoadNotice.vue'
 import { computed, ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import { posts } from './data/posts.js'
@@ -29,6 +30,7 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', syncRoute))
 
 <template>
   <div class="site blog-site" :class="{ light }">
+    <PageTransition />
     <header class="blog-header">
       <a class="brand" href="./index.html"><span class="brand-mark">G</span><span>GOLDSTONE<span class="brand-sub">每个像素都有自己的可能</span></span></a>
       <nav aria-label="Blog 导航"><a href="./index.html">小站首页 ↗</a><a href="./blog.html" class="current" aria-current="page">BLOG</a><button type="button" :aria-label="light ? '切换深色主题' : '切换浅色主题'" @click="light = !light">{{ light ? '☾' : '☼' }}</button></nav>

@@ -1,4 +1,5 @@
 <script setup>
+import PageTransition from './components/PageTransition.vue'
 import BlogLoadNotice from './components/BlogLoadNotice.vue'
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import ProjectDetailMedia from './components/ProjectDetailMedia.vue'
@@ -44,6 +45,7 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
 
 <template>
   <div class="site" :class="{ light, 'left-open': leftOpen, 'right-open': rightOpen }">
+    <PageTransition />
     <header class="topbar">
       <a class="brand" href="#home" @click.prevent="go('home')"><span class="brand-mark">G</span><span>GOLDSTONE<span class="brand-sub">每个像素都有自己的可能</span></span></a>
       <div class="header-center"><span class="status-dot"></span> PERSONAL SPACE <span class="header-slash">/</span> EST. 2026</div>
