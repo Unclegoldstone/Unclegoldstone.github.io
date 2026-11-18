@@ -21,7 +21,7 @@ excerpt: 这是一段简短摘要。
 - 一段文字
 - 一张照片
 
-![图片说明](./assests/my-photo.jpg)
+![图片说明](./assets/my-photo.jpg)
 
 > 给未来的自己留一点痕迹。
 
@@ -34,9 +34,9 @@ console.log('Hello, world!')
 
 ## 2. 添加图片
 
-把示例中的图片放到 `public./assests/my-photo.jpg`，文章中使用 `./assests/my-photo.jpg` 引用，文件名和路径要与 Markdown 一致。也支持 PNG、WebP、GIF、SVG 和 AVIF，或完整 HTTPS 图片地址。
+把示例中的图片放到 `src/blogs/posts/assets/my-photo.jpg`，文章中使用 `./assets/my-photo.jpg` 引用，文件名和路径要与 Markdown 一致。也支持 PNG、WebP、GIF、SVG 和 AVIF，或完整 HTTPS 图片地址。
 
-图片按原比例适配正文宽度，点击可查看原图。文件随项目构建，不依赖外部图床。Blog 插图统一存放在 `src/blogs/posts/assests/`（目录名为 assests），使用相对于文章的路径引用。请确保文件存在且大小写一致，图片路径有误时，该文章会被跳过，本地页面会显示具体错误，其他文章正常加载。
+图片按原比例适配正文宽度，点击可查看原图。文件随项目构建，不依赖外部图床。Blog 插图统一存放在 `src/blogs/posts/assets/`（目录名为 assets），使用相对于文章的路径引用。请确保文件存在且大小写一致，图片路径有误时，该文章会被跳过，本地页面会显示具体错误，其他文章正常加载。
 
 ## 3. 预览和发布
 
@@ -69,3 +69,17 @@ category:
 支持 `A.md`、`my-post.md` 和中文文件名。文件名或显式 `slug` 可包含文字、数字、短横线和下划线，不能包含空格、斜线、问号等路径符号；发布后应保持不变。
 
 单篇文章的 YAML、日期、图片路径或 slug 有误时，该文章会被跳过，主页和 Blog 仍可正常打开。本地开发页面会显示出错文件与原因，修正并保存后会重新加载。重复 slug 也会提示，请为不同文章使用不同标识。
+支持 `./assets/图片.png`、`assets/图片.png`，也兼容 Windows 编辑器生成的 `assets\图片.png`。推荐使用正斜杠 `/`。
+
+
+## 编辑器生成的图片缩放
+
+支持以下 `<img>` 写法（也支持 Windows 反斜杠路径）：
+
+```html
+<img src="assets/example.png" alt="图片说明" style="zoom: 33%;" />
+```
+
+`zoom: 33%` 按原图尺寸的 33% 显示，`zoom: 0.33` 等效；图片始终限制在正文宽度内。修改比例不会改变图片文件。保留点击查看原图、延迟加载和等比例显示。
+
+还可识别 `title`、数字形式的 `width` 和 `height`。仅兼容图片标签，不开放其他 HTML、事件属性或任意 CSS。若开头写成 `\<img`，或位于代码块中，会作为示例文本显示，不会渲染为图片。

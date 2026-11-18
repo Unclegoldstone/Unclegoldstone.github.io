@@ -46,7 +46,7 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', syncRoute))
       </template>
       <a v-else class="blog-back" href="./blog.html">← 返回全部文章</a>
 
-      <div class="blog-columns">
+      <div class="blog-columns" :class="{ 'blog-columns--reading': article }">
         <main class="blog-main">
           <template v-if="!slug">
             <div class="blog-section-title"><h2><span>01 /</span> 最近的文字</h2><span>按发布时间排序</span></div>
@@ -85,4 +85,21 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', syncRoute))
 @media(max-width:900px){.blog-columns{grid-template-columns:minmax(0,1fr) 215px;gap:28px}.blog-aside{padding-left:20px}.blog-intro-copy{padding:28px}.blog-intro h1{font-size:26px}}
 @media(max-width:650px){.blog-header{height:70px;padding:0 16px}.blog-header .brand{font-size:14px}.blog-header .brand-sub{font-size:8px;letter-spacing:0}.blog-header nav{gap:14px;font-size:10px}.blog-header nav>a:first-child{display:none}.blog-shell{padding:24px 18px 0}.blog-coordinate{display:none}.blog-breadcrumb{font-size:10px}.blog-intro{grid-template-columns:1fr;margin-bottom:30px}.blog-intro-copy{padding:25px 22px}.blog-intro h1{font-size:26px}.blog-intro-art{border-left:0;border-top:1px solid var(--line)}.blog-intro-art :deep(.pixel-scene){min-height:160px;max-height:180px}.blog-art-note{display:none}.blog-columns{grid-template-columns:1fr;gap:24px}.blog-aside{border-left:0;border-top:1px solid var(--line);padding:26px 0 0}.blog-author img{float:left;margin:0 18px 20px 0}.blog-author .blog-kicker{padding-top:3px;font-size:9px}.blog-author>p:not(.blog-kicker){clear:both}.blog-side-section,.blog-aside blockquote{display:none}.blog-post h2{font-size:19px}.blog-post>p{font-size:12px}.blog-tools{gap:12px}.blog-search{width:100%}.blog-search input{width:100%}.blog-post-meta{gap:10px}.blog-reading h1{font-size:27px}.blog-prose p{font-size:14px}.blog-footer{font-size:9px;flex-wrap:wrap}.blog-readtime{margin-left:0}}
 .blog-post-meta>.blog-category{color:var(--accent);border:1px solid var(--line);padding:2px 6px}
+
+/* Keep the reading sidebar visible; long sidebar content scrolls independently. */
+@media(min-width:651px){
+  .blog-columns--reading{align-items:start}
+  .blog-columns--reading .blog-aside{
+    position:sticky;
+    top:106px;
+    max-height:calc(100vh - 130px);
+    max-height:calc(100dvh - 130px);
+    overflow-y:auto;
+    overscroll-behavior-y:contain;
+    scrollbar-width:thin;
+    scrollbar-color:var(--line) transparent;
+    scrollbar-gutter:stable;
+    padding-right:8px;
+  }
+}
 </style>

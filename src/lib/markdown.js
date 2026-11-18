@@ -1,7 +1,8 @@
 import MarkdownIt from 'markdown-it'
 import { parse as parseYaml } from 'yaml'
+import { htmlImageCompat } from './htmlImageCompat.js'
 
-const md = new MarkdownIt({ html: false, linkify: true, typographer: false })
+const md = new MarkdownIt({ html: false, linkify: true, typographer: false }).use(htmlImageCompat)
 const plain = value => value.replace(/<[^>]*>/g, '').replace(/[#*_`\[\]]/g, '').trim()
 const originalImage = md.renderer.rules.image
 md.renderer.rules.image = (tokens, index, options, env, self) => {
