@@ -10,7 +10,8 @@ import ProjectsSection from './components/ProjectsSection.vue'
 import NotesSection from './components/NotesSection.vue'
 import HomeTyping from './components/HomeTyping.vue'
 import DayScene from './components/DayScene.vue'
-import { projects } from './data/projects.js'
+import { projects, homeProjects } from './data/projects.js'
+import MarkdownArticle from './components/MarkdownArticle.vue'
 import { posts, getLatestBlogPosts } from './data/posts.js'
 const latestPosts = getLatestBlogPosts(3)
 import { useActiveSection } from './composables/useActiveSection.js'
@@ -62,7 +63,7 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
         <div class="sidebar-divider"></div>
         <p class="tiny-label">THE LITTLE THINGS</p>
         <a class="quiet-link" href="#notes" @click.prevent="go('notes')"><span>✧</span> 灵感与日常 <span class="count">{{ String(posts.length).padStart(2, '0') }}</span></a>
-        <a class="quiet-link" href="#projects" @click.prevent="go('projects')"><span>◇</span> 创作实验室 <span class="count">{{ String(projects.length).padStart(2, '0') }}</span></a>
+        <a class="quiet-link" href="./works.html"><span>◇</span> 作品陈列室 <span class="count">{{ String(projects.length).padStart(2, '0') }}</span></a>
         <div class="sidebar-bottom"><div class="pixel-sprout">♧</div><p>慢慢探索，<br>这里总有新的故事。</p><span class="tiny-label">STAY CURIOUS, KEEP BUILDING.</span><SidebarActions /></div>
       </aside>
 
@@ -76,7 +77,7 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
           <div class="welcome-note"><span class="note-icon">✦</span><span>欢迎路过我的像素小站。找个舒服的位置，随便看看吧。</span><span class="note-end">MAKE YOURSELF AT HOME</span></div>
         </section>
 
-        <ProjectsSection :projects="projects" @open-detail="openDetail" />
+        <ProjectsSection :projects="homeProjects" @open-detail="openDetail" />
 
         <NotesSection :posts="latestPosts" />
 
@@ -94,6 +95,6 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
       </aside>
     </div>
 
-    <dialog ref="dialog" class="detail-dialog" :class="{ 'image-detail': selected?.detailImages?.length || selected?.cover }" @close="onDialogClose" @click="(e) => { if (e.target === dialog) closeDetail() }"><template v-if="selected"><div class="dialog-top"><template v-if="selected.type"><time v-if="selected.publishedAt" class="tiny-label" :datetime="selected.publishedAt">发布于 {{ selected.publishedAt }}</time><span v-else class="tiny-label">发布日期待补充</span></template><span v-else class="tiny-label">GOLDSTONE / JOURNAL</span><button class="icon-button" aria-label="关闭详情" @click="closeDetail">×</button></div><ProjectDetailMedia :project="selected" /><h2>{{ selected.title }}</h2><p class="detail-body">{{ selected.body }}</p><p v-if="selected.downloadUrl" class="detail-download">github link: <a :href="selected.downloadUrl" target="_blank" rel="noopener noreferrer">{{ selected.downloadUrl }} ↗</a></p><span v-if="selected.isExample !== false" class="demo-label">示例内容 · 可在项目源文件中替换</span></template></dialog>
+    <dialog ref="dialog" class="detail-dialog" :class="{ 'image-detail': selected?.detailImages?.length || selected?.cover }" @close="onDialogClose" @click="(e) => { if (e.target === dialog) closeDetail() }"><template v-if="selected"><div class="dialog-top"><template v-if="selected.type"><time v-if="selected.publishedAt" class="tiny-label" :datetime="selected.publishedAt">发布于 {{ selected.publishedAt }}</time><span v-else class="tiny-label">发布日期待补充</span></template><span v-else class="tiny-label">GOLDSTONE / JOURNAL</span><button class="icon-button" aria-label="关闭详情" @click="closeDetail">×</button></div><ProjectDetailMedia :project="selected" /><h2>{{ selected.title }}</h2><MarkdownArticle v-if="selected.bodyHtml" :article="{ html: selected.bodyHtml, toc: [] }" /><p v-else class="detail-body">{{ selected.body }}</p><p v-if="selected.downloadUrl" class="detail-download">github link: <a :href="selected.downloadUrl" target="_blank" rel="noopener noreferrer">{{ selected.downloadUrl }} ↗</a></p><span v-if="selected.isExample !== false" class="demo-label">示例内容 · 可在项目源文件中替换</span></template></dialog>
   </div>
 </template>

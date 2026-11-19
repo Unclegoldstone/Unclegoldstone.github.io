@@ -39,7 +39,7 @@ function scrollProjects(event) {
         <h2>我的作品</h2>
         <span class="section-en">MY PROJECTS</span>
       </div>
-      <span class="section-count">{{ projectCount }} 件小小创作</span>
+      <a class="all-works-link" href="./works.html">查看全部作品 ↗</a>
     </div>
     <div class="filters" aria-label="筛选作品">
       <button v-for="tag in filters" :key="tag" :class="{ selected: filter === tag }" :aria-pressed="filter === tag" @click="filter = tag">
@@ -66,3 +66,7 @@ function scrollProjects(event) {
     </div>
   </section>
 </template>
+
+<style scoped>
+.all-works-link{margin-left:auto;color:var(--accent);font-size:11px;white-space:nowrap}.all-works-link:hover{text-decoration:underline}
+</style>
