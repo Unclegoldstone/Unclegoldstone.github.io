@@ -1,6 +1,6 @@
 ---
 title: "Web更新日志"
-date: '2026-11-18'
+date: '2026-11-25'
 category: ["开发日志"]
 excerpt: "介绍下小站的维护日常"
 # 草稿设为 true，不会出现在 Blog 中；完成后改为 false。
