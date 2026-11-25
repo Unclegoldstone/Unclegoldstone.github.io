@@ -1,11 +1,13 @@
 <script setup>
+import { useTheme } from './composables/useTheme.js'
+const { light, toggleTheme } = useTheme()
 import { ref, computed, nextTick, onBeforeUnmount } from 'vue'
 import { projects, workErrors } from './data/projects.js'
 import ProjectDetailMedia from './components/ProjectDetailMedia.vue'
 import MarkdownArticle from './components/MarkdownArticle.vue'
 import PageTransition from './components/PageTransition.vue'
 
-const category=ref('全部'),query=ref(''),sort=ref('default'),light=ref(false),selected=ref(null),dialog=ref(null)
+const category=ref('全部'),query=ref(''),sort=ref('default'),selected=ref(null),dialog=ref(null)
 const development=import.meta.env.DEV
 const categories=['全部','个人项目','合作项目','小工具']
 const visibleProjects=computed(()=>{
@@ -15,8 +17,7 @@ const visibleProjects=computed(()=>{
 let returnFocus,previousOverflow=''
 async function open(project){returnFocus=document.activeElement;previousOverflow=document.body.style.overflow;selected.value=project;await nextTick();dialog.value.showModal();document.body.style.overflow='hidden'}
 function closed(){selected.value=null;document.body.style.overflow=previousOverflow;returnFocus?.focus()}
-function toggleTheme(){light.value=!light.value;document.body.classList.toggle('light',light.value)}
-onBeforeUnmount(()=>{document.body.classList.remove('light');if(selected.value)document.body.style.overflow=previousOverflow})
+onBeforeUnmount(()=>{if(selected.value)document.body.style.overflow=previousOverflow})
 </script>
 <template>
   <PageTransition />

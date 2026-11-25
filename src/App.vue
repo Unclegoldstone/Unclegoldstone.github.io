@@ -1,4 +1,6 @@
 <script setup>
+import { useTheme } from './composables/useTheme.js'
+const { light, toggleTheme } = useTheme()
 import PageTransition from './components/PageTransition.vue'
 import BlogLoadNotice from './components/BlogLoadNotice.vue'
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
@@ -17,7 +19,7 @@ const latestPosts = getLatestBlogPosts(3)
 import { useActiveSection } from './composables/useActiveSection.js'
 
 const leftOpen = ref(false), rightOpen = ref(false), compact = ref(false)
-const active = ref('home'), light = ref(false), selected = ref(null)
+const active = ref('home'), selected = ref(null)
 const dialog = ref(null)
 const level = new Date().getFullYear() - 2003 + 1
 let returnFocus
@@ -50,7 +52,7 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
     <header class="topbar">
       <a class="brand" href="#home" @click.prevent="go('home')"><span class="brand-mark">G</span><span>GOLDSTONE<span class="brand-sub">每个像素都有自己的可能</span></span></a>
       <div class="header-center"><span class="status-dot"></span> PERSONAL SPACE <span class="header-slash">/</span> EST. 2026</div>
-      <div class="header-actions"><button class="icon-button" :aria-expanded="leftOpen" aria-controls="left-sidebar" aria-label="切换导航侧栏" @click="toggle('left')">☰</button><button class="icon-button theme-button" :aria-label="light ? '切换深色主题' : '切换浅色主题'" @click="light = !light">{{ light ? '☾' : '☼' }}</button><button class="icon-button" :aria-expanded="rightOpen" aria-controls="right-sidebar" aria-label="切换个人信息侧栏" @click="toggle('right')">▥</button></div>
+      <div class="header-actions"><button class="icon-button" :aria-expanded="leftOpen" aria-controls="left-sidebar" aria-label="切换导航侧栏" @click="toggle('left')">☰</button><button class="icon-button theme-button" :aria-label="light ? '切换深色主题' : '切换浅色主题'" @click="toggleTheme">{{ light ? '☾' : '☼' }}</button><button class="icon-button" :aria-expanded="rightOpen" aria-controls="right-sidebar" aria-label="切换个人信息侧栏" @click="toggle('right')">▥</button></div>
     </header>
 
     <button v-if="compact && (leftOpen || rightOpen)" class="backdrop" aria-label="关闭侧栏" @click="closeSides"></button>
