@@ -3,7 +3,7 @@ import { useTheme } from './composables/useTheme.js'
 const { light, toggleTheme } = useTheme()
 import PageTransition from './components/PageTransition.vue'
 import BlogLoadNotice from './components/BlogLoadNotice.vue'
-import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import ProjectDetailMedia from './components/ProjectDetailMedia.vue'
 import CatCompanion from './CatCompanion.vue'
 import profileAvatar from './assets/profile-gourd-pixel.png'
@@ -12,17 +12,15 @@ import ProjectsSection from './components/ProjectsSection.vue'
 import NotesSection from './components/NotesSection.vue'
 import HomeTyping from './components/HomeTyping.vue'
 import DayScene from './components/DayScene.vue'
-import { projects, homeProjects } from './data/projects.js'
+import { homeProjects, latestPosts, postCount, projectCount, blogPostErrors, loadWorkDetails } from './data/home.js'
+import { useWorkDetail } from './composables/useWorkDetail.js'
 import MarkdownArticle from './components/MarkdownArticle.vue'
-import { posts, getLatestBlogPosts } from './data/posts.js'
-const latestPosts = getLatestBlogPosts(3)
 import { useActiveSection } from './composables/useActiveSection.js'
 
 const leftOpen = ref(false), rightOpen = ref(false), compact = ref(false)
-const active = ref('home'), selected = ref(null)
-const dialog = ref(null)
+const active = ref('home')
+const { selected, dialog, detailLoading, detailError, openDetail, closeDetail, onDialogClose, retryDetail } = useWorkDetail(loadWorkDetails)
 const level = new Date().getFullYear() - 2003 + 1
-let returnFocus
 const links = [{ id: 'home', icon: '⌂', name: '首页', en: 'HOME' }, { id: 'projects', icon: '▦', name: '我的作品', en: 'PROJECTS' }, { id: 'notes', icon: '≡', name: '随笔记录', en: 'JOURNAL' }, { id: 'about', icon: '☺', name: '关于我', en: 'ABOUT' }]
 
 useActiveSection(active, links.map(link => link.id))
@@ -37,9 +35,6 @@ function toggle(side) {
 }
 function closeSides() { leftOpen.value = false; rightOpen.value = false }
 function go(id) { active.value = id; if (compact.value) closeSides(); document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }) }
-async function openDetail(item) { returnFocus = document.activeElement; selected.value = item; await nextTick(); dialog.value.showModal() }
-function closeDetail() { dialog.value.close() }
-function onDialogClose() { selected.value = null; returnFocus?.focus() }
 function onKey(e) { if (e.key === 'Escape' && compact.value) closeSides() }
 watch([leftOpen, rightOpen, compact], () => { document.body.classList.toggle('drawer-open', compact.value && (leftOpen.value || rightOpen.value)) })
 onMounted(() => { compact.value = window.innerWidth < 1100; leftOpen.value = !compact.value; rightOpen.value = !compact.value; window.addEventListener('resize', syncLayout); window.addEventListener('keydown', onKey) })
@@ -57,15 +52,15 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
 
     <button v-if="compact && (leftOpen || rightOpen)" class="backdrop" aria-label="关闭侧栏" @click="closeSides"></button>
 
-    <BlogLoadNotice />
+    <BlogLoadNotice :errors="blogPostErrors" />
     <div class="layout">
       <aside v-if="leftOpen" id="left-sidebar" class="sidebar left-sidebar" aria-label="网站导航">
         <div class="sidebar-heading"><span>探索小站</span><button class="small-button" aria-label="收起导航侧栏" @click="toggle('left')">←</button></div>
         <nav><a v-for="link in links" :key="link.id" :href="`#${link.id}`" :class="{ active: active === link.id }" :aria-current="active === link.id ? 'location' : undefined" @click.prevent="go(link.id)"><span class="nav-icon">{{ link.icon }}</span><span>{{ link.name }}<small>{{ link.en }}</small></span><span v-if="active === link.id" class="nav-arrow">›</span></a></nav>
         <div class="sidebar-divider"></div>
         <p class="tiny-label">THE LITTLE THINGS</p>
-        <a class="quiet-link" href="#notes" @click.prevent="go('notes')"><span>✧</span> 灵感与日常 <span class="count">{{ String(posts.length).padStart(2, '0') }}</span></a>
-        <a class="quiet-link" href="./works.html"><span>◇</span> 作品陈列室 <span class="count">{{ String(projects.length).padStart(2, '0') }}</span></a>
+        <a class="quiet-link" href="#notes" @click.prevent="go('notes')"><span>✧</span> 灵感与日常 <span class="count">{{ String(postCount).padStart(2, '0') }}</span></a>
+        <a class="quiet-link" href="./works.html"><span>◇</span> 作品陈列室 <span class="count">{{ String(projectCount).padStart(2, '0') }}</span></a>
         <div class="sidebar-bottom"><div class="pixel-sprout">♧</div><p>慢慢探索，<br>这里总有新的故事。</p><span class="tiny-label">STAY CURIOUS, KEEP BUILDING.</span><SidebarActions /></div>
       </aside>
 
@@ -97,6 +92,6 @@ onUnmounted(() => { window.removeEventListener('resize', syncLayout); window.rem
       </aside>
     </div>
 
-    <dialog ref="dialog" class="detail-dialog" :class="{ 'image-detail': selected?.detailImages?.length || selected?.cover }" @close="onDialogClose" @click="(e) => { if (e.target === dialog) closeDetail() }"><template v-if="selected"><div class="dialog-top"><template v-if="selected.type"><time v-if="selected.publishedAt" class="tiny-label" :datetime="selected.publishedAt">发布于 {{ selected.publishedAt }}</time><span v-else class="tiny-label">发布日期待补充</span></template><span v-else class="tiny-label">GOLDSTONE / JOURNAL</span><button class="icon-button" aria-label="关闭详情" @click="closeDetail">×</button></div><ProjectDetailMedia :project="selected" /><h2>{{ selected.title }}</h2><MarkdownArticle v-if="selected.bodyHtml" :article="{ html: selected.bodyHtml, toc: [] }" /><p v-else class="detail-body">{{ selected.body }}</p><p v-if="selected.downloadUrl" class="detail-download">github link: <a :href="selected.downloadUrl" target="_blank" rel="noopener noreferrer">{{ selected.downloadUrl }} ↗</a></p><span v-if="selected.isExample !== false" class="demo-label">示例内容 · 可在项目源文件中替换</span></template></dialog>
+    <dialog ref="dialog" class="detail-dialog" :class="{ 'image-detail': selected?.detailImages?.length || selected?.cover }" @close="onDialogClose" @click="(e) => { if (e.target === dialog) closeDetail() }"><template v-if="selected"><div class="dialog-top"><template v-if="selected.type"><time v-if="selected.publishedAt" class="tiny-label" :datetime="selected.publishedAt">发布于 {{ selected.publishedAt }}</time><span v-else class="tiny-label">发布日期待补充</span></template><span v-else class="tiny-label">GOLDSTONE / JOURNAL</span><button class="icon-button" aria-label="关闭详情" @click="closeDetail">×</button></div><p v-if="detailLoading" class="detail-load-state" role="status">正在加载作品详情…</p><p v-else-if="detailError" class="detail-load-state" role="alert">作品详情暂时无法加载。<button @click="retryDetail">重试</button></p><ProjectDetailMedia v-else :project="selected" /><h2>{{ selected.title }}</h2><MarkdownArticle v-if="selected.bodyHtml" :article="{ html: selected.bodyHtml, toc: [] }" /><p v-else-if="!detailLoading && !detailError" class="detail-body">{{ selected.body }}</p><p v-if="selected.downloadUrl" class="detail-download">github link: <a :href="selected.downloadUrl" target="_blank" rel="noopener noreferrer">{{ selected.downloadUrl }} ↗</a></p><span v-if="selected.isExample !== false" class="demo-label">示例内容 · 可在项目源文件中替换</span></template></dialog>
   </div>
 </template>

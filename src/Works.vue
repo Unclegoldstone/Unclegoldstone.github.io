@@ -1,23 +1,21 @@
 <script setup>
 import { useTheme } from './composables/useTheme.js'
 const { light, toggleTheme } = useTheme()
-import { ref, computed, nextTick, onBeforeUnmount } from 'vue'
-import { projects, workErrors } from './data/projects.js'
+import { ref, computed } from 'vue'
+import { projects, workErrors, loadWorkDetails } from './data/projects.js'
+import { useWorkDetail } from './composables/useWorkDetail.js'
 import ProjectDetailMedia from './components/ProjectDetailMedia.vue'
 import MarkdownArticle from './components/MarkdownArticle.vue'
 import PageTransition from './components/PageTransition.vue'
 
-const category=ref('全部'),query=ref(''),sort=ref('default'),selected=ref(null),dialog=ref(null)
+const category=ref('全部'),query=ref(''),sort=ref('default')
+const { selected, dialog, detailLoading, detailError, openDetail: open, onDialogClose: closed, retryDetail } = useWorkDetail(loadWorkDetails)
 const development=import.meta.env.DEV
 const categories=['全部','个人项目','合作项目','小工具']
 const visibleProjects=computed(()=>{
   const result=projects.filter(p=>(category.value==='全部'||p.type===category.value)&&`${p.title} ${p.desc} ${p.tags.join(' ')}`.toLowerCase().includes(query.value.toLowerCase()))
   return sort.value==='newest'?[...result].sort((a,b)=>b.publishedAt.localeCompare(a.publishedAt)):result
 })
-let returnFocus,previousOverflow=''
-async function open(project){returnFocus=document.activeElement;previousOverflow=document.body.style.overflow;selected.value=project;await nextTick();dialog.value.showModal();document.body.style.overflow='hidden'}
-function closed(){selected.value=null;document.body.style.overflow=previousOverflow;returnFocus?.focus()}
-onBeforeUnmount(()=>{if(selected.value)document.body.style.overflow=previousOverflow})
 </script>
 <template>
   <PageTransition />
@@ -34,6 +32,6 @@ onBeforeUnmount(()=>{if(selected.value)document.body.style.overflow=previousOver
     <footer><span>© {{new Date().getFullYear()}} GOLDSTONE · 创作陈列室</span><a href="./blog.html">去文字角落看看 ↗</a><a href="#top">回到顶部 ↑</a></footer>
   </main>
   <dialog ref="dialog" aria-labelledby="detail-title" @close="closed" @click="event=>{if(event.target===dialog){const rect=dialog.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.close()}}">
-    <template v-if="selected"><div class="dialog-top"><time class="eyebrow" :datetime="selected.publishedAt||undefined">{{selected.publishedAt?`发布于 ${selected.publishedAt}`:'发布日期待补充'}}</time><button id="close" aria-label="关闭作品详情" @click="dialog.close()">×</button></div><ProjectDetailMedia :project="selected"/><div class="detail-info"><span class="category-label">{{selected.type}}</span><h2 id="detail-title">{{selected.title}}</h2><div class="tags"><span v-for="tag in selected.tags" :key="tag">{{tag}}</span></div><MarkdownArticle :article="{html:selected.bodyHtml,toc:[]}"/><a v-if="selected.downloadUrl" id="github" :href="selected.downloadUrl" target="_blank" rel="noopener noreferrer">GitHub link <span>↗</span></a><small v-if="selected.isExample" id="example-note">示例项目</small></div></template>
+    <template v-if="selected"><div class="dialog-top"><time class="eyebrow" :datetime="selected.publishedAt||undefined">{{selected.publishedAt?`发布于 ${selected.publishedAt}`:'发布日期待补充'}}</time><button id="close" aria-label="关闭作品详情" @click="dialog.close()">×</button></div><p v-if="detailLoading" class="detail-load-state" role="status">正在加载作品详情…</p><p v-else-if="detailError" class="detail-load-state" role="alert">作品详情暂时无法加载。<button @click="retryDetail">重试</button></p><ProjectDetailMedia v-else :project="selected"/><div class="detail-info"><span class="category-label">{{selected.type}}</span><h2 id="detail-title">{{selected.title}}</h2><div class="tags"><span v-for="tag in selected.tags" :key="tag">{{tag}}</span></div><MarkdownArticle v-if="selected.bodyHtml" :article="{html:selected.bodyHtml,toc:[]}"/><a v-if="selected.downloadUrl" id="github" :href="selected.downloadUrl" target="_blank" rel="noopener noreferrer">GitHub link <span>↗</span></a><small v-if="selected.isExample" id="example-note">示例项目</small></div></template>
   </dialog>
 </template>

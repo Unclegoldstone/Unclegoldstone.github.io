@@ -52,3 +52,5 @@ a.sidebar-action:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--
 .project-art>.project-cover{display:block;width:100%;height:auto;aspect-ratio:2/1;object-fit:cover;image-rendering:pixelated}
 .detail-dialog.image-detail{width:min(1040px,calc(100% - 32px))}
 .detail-download{margin-top:20px;font-size:13px;line-height:1.9;color:var(--muted)}.detail-download a{color:var(--accent);text-decoration:underline;text-underline-offset:4px;overflow-wrap:anywhere}.detail-download a:hover{text-decoration-thickness:2px}
+
+.detail-load-state{padding:28px 12px;color:var(--muted);font-size:13px;line-height:1.8}.detail-load-state button{margin-left:12px;padding:6px 12px;background:var(--panel);color:var(--accent);border:1px solid var(--line)}

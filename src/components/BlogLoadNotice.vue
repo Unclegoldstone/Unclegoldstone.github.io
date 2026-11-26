@@ -1,11 +1,11 @@
 <script setup>
-import { blogPostErrors } from '../data/posts.js'
+defineProps({ errors: { type: Array, default: () => [] } })
 const development = import.meta.env.DEV
 </script>
 <template>
-  <aside v-if="development && blogPostErrors.length" class="blog-load-notice" role="alert">
-    <strong>{{ blogPostErrors.length }} 篇文章未能加载，其他内容可正常浏览。</strong>
-    <ul><li v-for="error in blogPostErrors" :key="error.filename"><code>{{ error.filename }}</code><p>{{ error.message }}</p></li></ul>
+  <aside v-if="development && errors.length" class="blog-load-notice" role="alert">
+    <strong>{{ errors.length }} 篇文章未能加载，其他内容可正常浏览。</strong>
+    <ul><li v-for="error in errors" :key="error.filename"><code>{{ error.filename }}</code><p>{{ error.message }}</p></li></ul>
     <p>修正文件并保存后，页面会自动重新加载。这条提示只在本地开发时显示。</p>
   </aside>
 </template>

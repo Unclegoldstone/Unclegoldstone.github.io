@@ -4,31 +4,45 @@ const { light, toggleTheme } = useTheme()
 import PageTransition from './components/PageTransition.vue'
 import BlogLoadNotice from './components/BlogLoadNotice.vue'
 import { computed, ref, onMounted, onBeforeUnmount, watch } from 'vue'
-import { posts } from './data/posts.js'
+import { posts, blogPostErrors, loadPostDetails, loadSearchIndex } from './data/posts.js'
 import avatar from './assets/profile-gourd-pixel.png'
 import DayScene from './components/DayScene.vue'
 import MarkdownArticle from './components/MarkdownArticle.vue'
 
-const category = ref('全部'), query = ref(''), slug = ref('')
-const categories = ['全部', ...new Set(posts.flatMap(post => post.categories))]
-const article = computed(() => posts.find(post => post.slug === slug.value))
-const filtered = computed(() => posts.filter(post => (category.value === '全部' || post.categories.includes(category.value)) && `${post.title} ${post.excerpt} ${post.categories.join(' ')} ${post.text}`.toLowerCase().includes(query.value.trim().toLowerCase())))
-const archives = computed(() => [...new Set(posts.map(post => post.publishedAt.slice(0, 7)))])
-const readingTime = post => Math.max(1, Math.ceil(post.text.length / 350))
-function selectCategory(tag) {
-  category.value = tag; query.value = ''; slug.value = ''
-  history.replaceState(null, '', './blog.html')
-  document.title = 'Blog · Goldstone 的文字角落'
-  window.scrollTo({ top: 0, behavior: 'instant' })
+const category=ref('全部'),query=ref(''),slug=ref(''),article=ref(null),articleLoading=ref(false),articleError=ref('')
+const categories=['全部',...new Set(posts.flatMap(post=>post.categories))]
+const articleMeta=computed(()=>posts.find(post=>post.slug===slug.value))
+const searchIndex=ref(null),searchLoading=ref(false),searchError=ref(false)
+let searchRequest,articleRequest=0,disposed=false
+async function ensureSearch(){
+  if(searchIndex.value)return
+  if(searchRequest)return searchRequest
+  searchLoading.value=true;searchError.value=false
+  searchRequest=loadSearchIndex().then(rows=>{if(!disposed)searchIndex.value=new Map(rows.map(row=>[row.slug,row.text]))}).catch(()=>{if(!disposed)searchError.value=true}).finally(()=>{if(!disposed)searchLoading.value=false;searchRequest=null})
+  return searchRequest
 }
-function syncRoute() {
-  try { slug.value = decodeURIComponent(location.hash.slice(1)) } catch { slug.value = '' }
-  window.scrollTo({ top: 0, behavior: 'instant' })
+watch(query,value=>{if(value.trim())ensureSearch()})
+const filtered=computed(()=>posts.filter(post=>(category.value==='全部'||post.categories.includes(category.value))&&`${post.title} ${post.excerpt} ${post.categories.join(' ')} ${searchIndex.value?.get(post.slug)||''}`.toLowerCase().includes(query.value.trim().toLowerCase())))
+const archives=computed(()=>[...new Set(posts.map(post=>post.publishedAt.slice(0,7)))])
+const readingTime=post=>post.readingMinutes
+async function loadArticle(){
+  const request=++articleRequest,meta=articleMeta.value
+  article.value=null;articleError.value='';articleLoading.value=!!meta
+  document.title=meta?`${meta.title} · Goldstone Blog`:'Blog · Goldstone 的文字角落'
+  if(!meta)return
+  try{
+    const detail=await loadPostDetails(meta.slug)
+    if(!disposed&&request===articleRequest)article.value=detail
+  }catch{if(!disposed&&request===articleRequest)articleError.value='这篇文章暂时无法加载，请重试。'}
+  finally{if(!disposed&&request===articleRequest)articleLoading.value=false}
 }
-watch(article, value => { document.title = value ? `${value.title} · Goldstone Blog` : 'Blog · Goldstone 的文字角落' })
-onMounted(() => { syncRoute(); window.addEventListener('hashchange', syncRoute) })
-onBeforeUnmount(() => window.removeEventListener('hashchange', syncRoute))
+watch(slug,loadArticle,{flush:'sync'})
+function selectCategory(tag){category.value=tag;query.value='';slug.value='';history.replaceState(null,'','./blog.html');document.title='Blog · Goldstone 的文字角落';window.scrollTo({top:0,behavior:'instant'})}
+function syncRoute(){try{slug.value=decodeURIComponent(location.hash.slice(1))}catch{slug.value=''}window.scrollTo({top:0,behavior:'instant'})}
+onMounted(()=>{syncRoute();window.addEventListener('hashchange',syncRoute)})
+onBeforeUnmount(()=>{disposed=true;articleRequest++;window.removeEventListener('hashchange',syncRoute)})
 </script>
+
 
 <template>
   <div class="site blog-site" :class="{ light }">
@@ -38,7 +52,7 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', syncRoute))
       <nav aria-label="Blog 导航"><a href="./works.html">我的作品 ↗</a><a class="blog-home-nav" href="./index.html">小站首页 ↗</a><a href="./blog.html" class="current" aria-current="page">BLOG</a><button type="button" :aria-label="light ? '切换深色主题' : '切换浅色主题'" @click="toggleTheme">{{ light ? '☾' : '☼' }}</button></nav>
     </header>
 
-    <div class="blog-shell"><BlogLoadNotice />
+    <div class="blog-shell"><BlogLoadNotice :errors="blogPostErrors" />
       <div class="blog-breadcrumb"><a href="./index.html">小站入口</a><span>/</span><a href="./blog.html">文字角落</a><span v-if="article">/ 阅读</span><span class="blog-coordinate">WORDS / IDEAS / EVERYDAY</span></div>
       <template v-if="!slug">
         <section class="blog-intro">
@@ -48,19 +62,19 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', syncRoute))
       </template>
       <a v-else class="blog-back" href="./blog.html">← 返回全部文章</a>
 
-      <div class="blog-columns" :class="{ 'blog-columns--reading': article }">
+      <div class="blog-columns" :class="{ 'blog-columns--reading': articleMeta }">
         <main class="blog-main">
           <template v-if="!slug">
             <div class="blog-section-title"><h2><span>01 /</span> 最近的文字</h2><span>按发布时间排序</span></div>
             <div class="blog-tools"><div class="blog-tabs" aria-label="文章分类"><button v-for="tag in categories" :key="tag" type="button" :aria-pressed="category === tag" :class="{ active: category === tag }" @click="category = tag">{{ tag }} <small>{{ tag === '全部' ? posts.length : posts.filter(p => p.categories.includes(tag)).length }}</small></button></div><label class="blog-search"><span aria-hidden="true">⌕</span><input v-model="query" type="search" aria-label="搜索文章" placeholder="找一篇文字…"></label></div>
-            <p v-if="!filtered.length" class="blog-empty" role="status">没有找到对应的文章，换一个关键词试试吧。</p>
+            <p v-if="searchLoading" class="blog-search-state" role="status">正在搜索文章内容…</p><p v-if="searchError" class="blog-search-state" role="alert">全文搜索暂时无法加载，当前仅搜索标题和摘要。<button @click="ensureSearch">重试</button></p><p v-if="!filtered.length && !searchLoading" class="blog-empty" role="status">没有找到对应的文章，换一个关键词试试吧。</p>
             <article v-for="(post, index) in filtered" :key="post.slug" class="blog-post">
               <div class="blog-post-meta"><time :datetime="post.publishedAt">{{ post.publishedAt }}</time><span v-for="tag in post.categories" :key="tag" class="blog-category">{{ tag }}</span><span v-if="index === 0 && category === '全部' && !query" class="blog-new">最新</span><span class="blog-readtime">{{ readingTime(post) }} 分钟阅读</span></div>
               <h2><a :href="`#${post.slug}`">{{ post.title }}<span aria-hidden="true">↗</span></a></h2><p>{{ post.excerpt }}</p><a class="blog-read" :href="`#${post.slug}`">继续阅读 <span>→</span></a>
             </article>
             <p class="blog-end">— 暂时写到这里，新的故事正在路上 —</p>
           </template>
-          <article v-else-if="article" class="blog-reading">
+          <div v-else-if="articleLoading" class="blog-empty" role="status">正在加载文章…</div><div v-else-if="articleError" class="blog-empty" role="alert"><p>{{ articleError }}</p><button class="blog-retry" @click="loadArticle">重新加载</button></div><article v-else-if="article" class="blog-reading">
             <div class="blog-post-meta"><span v-for="tag in article.categories" :key="tag" class="blog-category">{{ tag }}</span><time :datetime="article.publishedAt">{{ article.publishedAt }}</time><span>{{ readingTime(article) }} 分钟阅读</span></div>
             <h1>{{ article.title }}</h1><div class="blog-byline"><img :src="avatar" alt="" width="30" height="30"><span>Goldstone <small>记录一点自己的痕迹。</small></span></div>
             <MarkdownArticle :key="article.slug" :article="article" />
@@ -104,4 +118,6 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', syncRoute))
     padding-right:8px;
   }
 }
+
+.blog-search-state{padding:12px 0;font-size:12px;color:var(--muted)}.blog-retry,.blog-search-state button{padding:8px 12px;margin:12px 0;background:var(--panel);border:1px solid var(--line);color:var(--accent)}
 </style>
